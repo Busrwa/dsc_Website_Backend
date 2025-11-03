@@ -62,7 +62,19 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'ckeditor',
 ]
+# ---- Cloudinary Ayarları ----
 INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config(
+    cloud_name=config("CLOUD_NAME"),
+    api_key=config("API_KEY"),
+    api_secret=config("API_SECRET"),
+)
+
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": config("CLOUD_NAME"),
     "API_KEY": config("API_KEY"),
@@ -75,7 +87,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,6 +94,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'dsc_website.urls'
 

@@ -5,10 +5,9 @@ class Blog(models.Model):
     title = models.CharField(max_length=200)
     content = RichTextField()
     image = models.ImageField(
-        upload_to='blog_images/',  # Dosyalar media/blog_images/ içine kaydedilecek
         blank=True,
         null=True
-    )
+    )  # Cloudinary kendi dosya yolunu yönetiyor
     published_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
