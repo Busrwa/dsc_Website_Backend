@@ -31,12 +31,12 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = [
     'dscwebsiteback.onrender.com',
-    'dschku.netlify.app',  # frontend domain
+    'dschkuu.netlify.app',  # frontend domain
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://dscwebsiteback.onrender.com",
-    "https://dschku.netlify.app",  # frontend domain
+    "https://dschkuu.netlify.app",  # frontend domain
 ]
 
 MEDIA_URL = '/media/'
