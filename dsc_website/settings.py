@@ -64,10 +64,11 @@ INSTALLED_APPS = [
 ]
 INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": "dwhcuu04i",
-    "API_KEY": "277335885156936",
-    "API_SECRET": "uduFzPGhf1jhhojnVcdiewAfR7k",
+    "CLOUD_NAME": config("CLOUD_NAME"),
+    "API_KEY": config("API_KEY"),
+    "API_SECRET": config("API_SECRET"),
 }
+
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MIDDLEWARE = [
