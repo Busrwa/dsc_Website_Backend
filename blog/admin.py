@@ -5,9 +5,10 @@ from docx import Document
 from docx.shared import Pt
 import os
 
+
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('title', 'published_date')
+    list_display = ('title', 'published_date', 'image')
     actions = ['export_blogs_word']
 
     def export_blogs_word(self, request, queryset):
@@ -34,7 +35,7 @@ class BlogAdmin(admin.ModelAdmin):
                 else:
                     document.add_paragraph("Resim dosyası bulunamadı.")
 
-            document.add_paragraph('\n' + '-'*50 + '\n')
+            document.add_paragraph('\n' + '-' * 50 + '\n')
 
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
