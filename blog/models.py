@@ -6,7 +6,8 @@ class Blog(models.Model):
     content = RichTextField()
     image = models.ImageField(
         blank=True,
-        null=True
+        null=True,
+        help_text="Görsel en boy oranı 16:9 olmalıdır (örnek: 1600x900, 1920x1080)."
     )  # Cloudinary kendi dosya yolunu yönetiyor
     published_date = models.DateTimeField(auto_now_add=True)
 
