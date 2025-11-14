@@ -6,7 +6,7 @@ class BlogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = "__all__"
+        fields = ["id", "title", "content", "published_date", "image"]  # image artık override ediliyor
 
     def get_image(self, obj):
         if obj.image:
