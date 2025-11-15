@@ -30,11 +30,11 @@ urlpatterns = [
     path('secure-by/', admin.site.urls),
     #path("create-admin/", lambda request: (create_admin_user(), HttpResponse("Admin oluşturuldu!"))[1]),
 
-    path('api/blog/', include('blog.urls')),
-    path('api/events/', include('events.urls')),
-    path('api/sponsors/', include('sponsors.urls')),
-    path('api/home/', include('home.urls')),
-    path('api/team/', include('team.urls')),
+    path('api/bloglar/', include('blog.urls')),
+    path('api/etkinlikler/', include('events.urls')),
+    path('api/sponsorlar/', include('sponsors.urls')),
+    path('api/anasayfa/', include('home.urls')),
+    path('api/takim/', include('team.urls')),
     path('api/token/', obtain_auth_token),
 ]
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
