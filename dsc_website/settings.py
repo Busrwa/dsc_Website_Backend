@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 import dj_database_url
-from pathlib import Path
 import os
-from decouple import config
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,26 +26,47 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
-SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     'dscwebsiteback.onrender.com',
-    'dschkuu.netlify.app',  # frontend domain
+    'dschkuu.netlify.app',
+    'localhost',
+    '127.0.0.1',
 ]
 
+# CORS Settings
 CORS_ALLOWED_ORIGINS = [
     "https://dscwebsiteback.onrender.com",
-    "https://dschkuu.netlify.app",  # frontend domain
+    "https://dschkuu.netlify.app",
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# Cloudinary Configuration (INSTALLED_APPS'ten ÖNCE tanımlanmalı)
+cloudinary.config(
+    cloud_name=config("CLOUD_NAME"),
+    api_key=config("API_KEY"),
+    api_secret=config("API_SECRET"),
+    secure=True
+)
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,37 +74,33 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third party apps - Sıralama çok önemli!
+    'cloudinary_storage',  # Önce bu
+    'cloudinary',           # Sonra bu
+    'ckeditor',
     'rest_framework',
     'corsheaders',
+    'knox',
+    'rest_framework.authtoken',
+
+    # Your apps
     'blog',
     'events',
     'sponsors',
     'team',
     'home',
-    'knox',
-    'rest_framework.authtoken',
-    'ckeditor',
 ]
-# ---- Cloudinary Ayarları ----
-INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
-cloudinary.config(
-    cloud_name=config("CLOUD_NAME"),
-    api_key=config("API_KEY"),
-    api_secret=config("API_SECRET"),
-)
-
+# Cloudinary Storage Settings
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": config("CLOUD_NAME"),
     "API_KEY": config("API_KEY"),
     "API_SECRET": config("API_SECRET"),
 }
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+# Media files - Cloudinary kullan
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -94,7 +113,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'dsc_website.urls'
 
@@ -119,15 +137,12 @@ WSGI_APPLICATION = 'dsc_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
-import os
-
-if os.getenv("DATABASE_URL"):  # Render'da PostgreSQL varsa
+if os.getenv("DATABASE_URL"):  # Render'da PostgreSQL
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),
+            default=config("DATABASE_URL"),
             conn_max_age=600,
-            ssl_require=True
+            conn_health_checks=True,
         )
     }
 else:  # Localde SQLite
@@ -156,18 +171,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # herkes görebilsin
+        'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+        'knox.auth.TokenAuthentication',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
 }
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Knox Token Settings
+KNOX_TOKEN_TTL = None  # Token'lar süresiz
+KNOX_TOKEN_LIMIT_PER_USER = 10  # Kullanıcı başına max 10 token
+KNOX_REVOKE_TOKENS_ON_LOGOUT = True  # Logout'ta token'ı iptal et
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -180,17 +210,16 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-KNOX_TOKEN_TTL = None  # Tokenların geçerlilik süresi
-KNOX_TOKEN_LIMIT_PER_USER = 10  # Kullanıcı başına maksimum token sayısı (isteğe bağlı)
-KNOX_REVOKE_TOKENS_ON_LOGOUT = True  # Kullanıcı çıkış yaparsa tokenları geçersiz kılar
+
+# Security Settings (sadece production'da aktif)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
