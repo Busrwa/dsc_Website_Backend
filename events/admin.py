@@ -1,48 +1,55 @@
+#event/admin.py
+
 from django.contrib import admin
 from .models import Event
 from django.http import HttpResponse
 from docx import Document
-from docx.shared import Inches
-from django.conf import settings
-import os
+from docx.shared import Pt
+from django.core.files.temp import NamedTemporaryFile
+import requests
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date', 'location')
+    list_display = ('name', 'date', 'location', 'image')
+    list_filter = ('date',)
+    search_fields = ('name', 'location')
     actions = ['export_events_word']
 
     def export_events_word(self, request, queryset):
-        # Sadece superuser kontrolü
         if not request.user.is_superuser:
             self.message_user(request, "Bu işlemi sadece admin yapabilir!", level='error')
             return None
 
-        doc = Document()
-        doc.add_heading('Events Raporu', level=1)
+        document = Document()
+        document.add_heading('Events Report', 0)
 
         for event in queryset.order_by('-date'):
-            doc.add_heading(event.name, level=2)
-            doc.add_paragraph(f"Tarih: {event.date.strftime('%Y-%m-%d %H:%M')}")
-            doc.add_paragraph(f"Yer: {event.location}")
-            doc.add_paragraph(f"Açıklama: {event.description}")
+            document.add_heading(event.name, level=1)
+            document.add_paragraph(f"Date: {event.date.strftime('%Y-%m-%d %H:%M')}")
+            document.add_paragraph(f"Location: {event.location}")
+            document.add_paragraph(event.description)
 
+            # Cloudinary resim ekleme
             if event.image:
-                img_path = os.path.join(settings.MEDIA_ROOT, event.image.name)
-                if os.path.exists(img_path):
-                    try:
-                        doc.add_picture(img_path, width=Inches(5))  # max genişlik 5 inch
-                    except Exception as e:
-                        doc.add_paragraph(f"Resim eklenemedi: {str(e)}")
-                else:
-                    doc.add_paragraph("Resim dosyası bulunamadı.")
+                try:
+                    img_url = event.image.url
+                    img_temp = NamedTemporaryFile(delete=True)
+                    img_temp.write(requests.get(img_url).content)
+                    img_temp.flush()
+                    document.add_picture(img_temp.name, width=Pt(400))
+                except Exception as e:
+                    document.add_paragraph(f"Resim eklenemedi: {str(e)}")
+            else:
+                document.add_paragraph("Resim yok.")
 
-            doc.add_paragraph("")  # boşluk
+            document.add_paragraph('\n' + '-' * 50 + '\n')
 
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
         response['Content-Disposition'] = 'attachment; filename="events.docx"'
-        doc.save(response)
+        document.save(response)
         return response
 
     export_events_word.short_description = "Seçili eventleri Word olarak indir"

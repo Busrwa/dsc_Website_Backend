@@ -10,7 +10,7 @@ class Blog(models.Model):
         blank=True,
         null=True,
         folder='blog_images',
-        help_text="Görsel en boy oranı 16:9 olmalıdır (örnek: 1600x900, 1920x1080)."
+        help_text="📷 Görsel en boy oranı 16:9 olmalıdır (örnek: 1600x900, 1920x1080)."
     )
     published_date = models.DateTimeField(auto_now_add=True)
 
