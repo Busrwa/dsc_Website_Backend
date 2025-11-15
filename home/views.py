@@ -19,6 +19,7 @@ class ArsivEntryListView(APIView):
     permission_classes = [IsAdminOrReadOnly]
 
     def get(self, request):
-        entries = ArsivEntry.objects.all().order_by("year")
+        # En son eklenen en üstte
+        entries = ArsivEntry.objects.all().order_by('-created_at')
         serializer = ArsivEntrySerializer(entries, many=True)
         return Response(serializer.data)
