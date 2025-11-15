@@ -3,7 +3,6 @@
 from django.db import models
 from ckeditor.fields import RichTextField
 from cloudinary.models import CloudinaryField
-from django.utils import timezone
 
 
 class Settings(models.Model):
@@ -28,7 +27,7 @@ class ArsivEntry(models.Model):
         help_text="📷 Görsel oranı 16:9 olmalıdır (örnek: 1600x900, 1920x1080)."
     )
     description = RichTextField()
-    created_at = models.DateTimeField(auto_now_add=True, default=timezone.now)  # Eklenme tarihi
+    created_at = models.DateTimeField(auto_now_add=True)  # Eklenme tarihi
 
     def __str__(self):
         return f"{self.name} ({self.year})"
