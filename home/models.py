@@ -32,6 +32,6 @@ class ArsivEntry(models.Model):
         return f"{self.name} ({self.year})"
 
     class Meta:
-        ordering = ['year']
+        ordering = ['-id']
         verbose_name = "Arşiv Girişi"
         verbose_name_plural = "Arşiv Girişleri"
