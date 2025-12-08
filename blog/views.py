@@ -46,16 +46,16 @@ class BlogDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 
 
-def create_admin_user():
-    username = "admindsc"
-    email = "busrayagcioglu2003@gmail.com"
-    password = "dschku2025+"
+#def create_admin_user():
+#    username = "admindsc"
+#    email = "busrayagcioglu2003@gmail.com"
+#    password = "dschku2025+"
 
-    if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username=username, email=email, password=password)
-        print("✅ Superuser başarıyla oluşturuldu!")
-    else:
-        print("⚠️ Superuser zaten mevcut.")
+#    if not User.objects.filter(username=username).exists():
+#        User.objects.create_superuser(username=username, email=email, password=password)
+#        print("✅ Superuser başarıyla oluşturuldu!")
+#    else:
+#        print("⚠️ Superuser zaten mevcut.")
