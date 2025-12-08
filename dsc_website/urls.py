@@ -23,12 +23,12 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponse
-#from blog.views import create_admin_user
+from blog.views import create_admin_user
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('secure-by/', admin.site.urls),
-    #path("create-admin/", lambda request: (create_admin_user(), HttpResponse("Admin oluşturuldu!"))[1]),
+    path("create-admin/", lambda request: (create_admin_user(), HttpResponse("Admin oluşturuldu!"))[1]),
 
     path('api/bloglar/', include('blog.urls')),
     path('api/etkinlikler/', include('events.urls')),
