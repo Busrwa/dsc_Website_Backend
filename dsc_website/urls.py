@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponse
-from blog.views import create_admin_user
+#from blog.views import create_admin_user
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
