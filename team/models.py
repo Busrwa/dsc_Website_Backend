@@ -1,4 +1,4 @@
-#team/models.py
+# team/models.py
 from django.db import models
 from cloudinary.models import CloudinaryField
 
@@ -14,11 +14,12 @@ class TeamMember(models.Model):
         help_text="Takım üyesi fotoğrafı"
     )
     bio = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ['name']
+        ordering = ['created_at']
         verbose_name = 'Team Member'
         verbose_name_plural = 'Team Members'
