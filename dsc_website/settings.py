@@ -36,12 +36,16 @@ ALLOWED_HOSTS = [
     'dschkuu.netlify.app',
     'localhost',
     '127.0.0.1',
+    'dschku.com',
+    'www.dschku.com',
 ]
 
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
     "https://dscwebsiteback.onrender.com",
     "https://dschkuu.netlify.app",
+    "https://dschku.com",
+    "https://www.dschku.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -77,7 +81,7 @@ INSTALLED_APPS = [
 
     # Third party apps - Sıralama çok önemli!
     'cloudinary_storage',  # Önce bu
-    'cloudinary',           # Sonra bu
+    'cloudinary',  # Sonra bu
     'ckeditor',
     'rest_framework',
     'corsheaders',
