@@ -9,6 +9,8 @@ venv/
 *.env
 *.log
 
+media/
+
 # Django
 #staticfiles/
 #media/
